@@ -14,43 +14,38 @@ const Products = () => {
 
   const itemsPerPage = 9;
 
-  // Get data from the Redux store
-  const { currentRole, responseSearch } = useSelector((state) => ({
+  // Provide a default value to avoid accessing undefined properties
+  const { currentRole, responseSearch = [] } = useSelector((state) => ({
     currentRole: state.user.currentRole,
-    responseSearch: state.products?.responseSearch || [], // Ensure responseSearch is defined
+    responseSearch: state.products ? state.products.responseSearch : [], // Ensure responseSearch is defined
   }));
 
   const [currentPage, setCurrentPage] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = responseSearch.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Handle adding to cart
   const handleAddToCart = (event, product) => {
     event.stopPropagation();
     dispatch(addToCart(product));
   };
 
-  // Handle uploading a product
   const handleUpload = (event, product) => {
     event.stopPropagation();
     dispatch(addStuff("ProductCreate", product));
   };
 
-  // Handle showing the login message
   const messageHandler = (event) => {
     event.stopPropagation();
     setMessage("You have to login or register first");
     setShowPopup(true);
   };
 
-  // Show a message if no products are found
-  if (!responseSearch.length) {
-    return <div>No products found</div>;
+  if (!responseSearch || responseSearch.length === 0) {
+    return <div>Product not found</div>;
   }
 
   return (
@@ -63,7 +58,7 @@ const Products = () => {
             sx={{ cursor: "pointer" }}
           >
             <ProductContainer>
-              <ProductImage src={data.productImage} alt={data.productName} />
+              <ProductImage src={data.productImage} />
               <ProductName>{data.productName}</ProductName>
               <PriceMrp>₹{data.price.mrp}</PriceMrp>
               <PriceCost>₹{data.price.cost}</PriceCost>
