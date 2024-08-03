@@ -176,15 +176,15 @@ export const getSpecificProducts = (id, address) => async (dispatch) => {
 
 export const getSearchedProducts = (address, key) => async (dispatch) => {
     dispatch(getRequest());
-
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}/${key}`);
         if (result.data.message) {
             dispatch(getSearchFailed(result.data.message));
         } else {
-            dispatch(setFilteredProducts(result.data)); // Assuming `result.data` contains the filtered products
+            dispatch(setFilteredProducts(result.data)); // Ensure this is handling the search results
         }
     } catch (error) {
         dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
+

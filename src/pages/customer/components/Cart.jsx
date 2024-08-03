@@ -5,14 +5,14 @@ import styled from 'styled-components';
 import emptyCart from "../../../assets/cartimg.png";
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-import { addToCart, removeAllFromCart, removeFromCart, updateCurrentUser } from '../../../redux/userSlice';  // Corrected import
+import { addToCart, removeAllFromCart, removeFromCart, updateCurrentUser } from '../../../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = ({ setIsCartOpen }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state.user);
-    let cartDetails = currentUser.cartDetails;
+    const cartDetails = currentUser?.cartDetails || [];
 
     const handleRemoveFromCart = (product) => {
         dispatch(removeFromCart(product));
@@ -36,13 +36,13 @@ const Cart = ({ setIsCartOpen }) => {
     };
 
     const productBuyingHandler = (id) => {
-        dispatch(updateCurrentUser(currentUser, currentUser._id));
+        dispatch(updateCurrentUser({ ...currentUser, cartDetails }, currentUser._id));
         setIsCartOpen(false);
         navigate(`/product/buy/${id}`);
     };
 
     const allProductsBuyingHandler = () => {
-        dispatch(updateCurrentUser(currentUser, currentUser._id));
+        dispatch(updateCurrentUser({ ...currentUser, cartDetails }, currentUser._id));
         setIsCartOpen(false);
         navigate("/product/Checkout");
     };
@@ -85,7 +85,7 @@ const Cart = ({ setIsCartOpen }) => {
                     {cartDetails.map((data, index) => (
                         <Grid
                             item xs={12}
-                            key={index}
+                            key={data._id}
                             ref={index === 0 ? firstCartItemRef : null}
                         >
                             <CartItem>

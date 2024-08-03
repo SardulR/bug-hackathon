@@ -19,7 +19,7 @@ import ViewOrder from './pages/customer/pages/ViewOrder';
 const App = () => {
   const dispatch = useDispatch();
   const { isLoggedIn, currentToken, currentRole, productData } = useSelector((state) => state.user);
-
+  console.log("env URl" ,process.env.REACT_APP_BASE_URL)
   useEffect(() => {
     if (currentToken) {
       dispatch(isTokenValid());
