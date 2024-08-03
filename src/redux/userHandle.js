@@ -5,6 +5,7 @@ import {
     authFailed,
     authError,
     stuffAdded,
+    updateFailed,
     getDeleteSuccess,
     getRequest,
     getFailed,
@@ -18,12 +19,11 @@ import {
     sellerProductSuccess,
     getSellerProductsFailed,
     stuffUpdated,
-    updateFailed,
-    getCustomersListFailed,
-    customersListSuccess,
-    getSpecificProductsFailed,
-    specificProductSuccess,
     updateCurrentUser,
+    customersListSuccess,
+    getCustomersListFailed,
+    specificProductSuccess,
+    getSpecificProductsFailed,
 } from './userSlice';
 
 // Define your async actions
@@ -40,7 +40,7 @@ export const authUser = (fields, role, mode) => async (dispatch) => {
             dispatch(authFailed(result.data.message));
         }
     } catch (error) {
-        dispatch(authError(error));
+        dispatch(authError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -58,7 +58,7 @@ export const addStuff = (address, fields) => async (dispatch) => {
             dispatch(stuffAdded());
         }
     } catch (error) {
-        dispatch(authError(error));
+        dispatch(authError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -71,7 +71,7 @@ export const updateStuff = (fields, id, address) => async (dispatch) => {
             dispatch(stuffUpdated());
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -86,13 +86,17 @@ export const deleteStuff = (id, address) => async (dispatch) => {
             dispatch(getDeleteSuccess());
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
 export const updateCustomer = (fields, id) => async (dispatch) => {
     dispatch(updateCurrentUser(fields));
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/CustomerUpdate/${id}`, fields);
+    try {
+        await axios.put(`${process.env.REACT_APP_BASE_URL}/CustomerUpdate/${id}`, fields);
+    } catch (error) {
+        dispatch(getError({ message: error.message, status: error.response?.status }));
+    }
 };
 
 export const getProductsbySeller = (id) => async (dispatch) => {
@@ -106,7 +110,7 @@ export const getProductsbySeller = (id) => async (dispatch) => {
             dispatch(sellerProductSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -121,7 +125,7 @@ export const getProducts = () => async (dispatch) => {
             dispatch(productSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -136,7 +140,7 @@ export const getProductDetails = (id) => async (dispatch) => {
             dispatch(productDetailsSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -151,12 +155,13 @@ export const getCustomers = (id) => async (dispatch) => {
             dispatch(customersListSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
 export const getSpecificProducts = (id, address) => async (dispatch) => {
     dispatch(getRequest());
+
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`);
         if (result.data.message) {
@@ -165,7 +170,7 @@ export const getSpecificProducts = (id, address) => async (dispatch) => {
             dispatch(specificProductSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
 };
 
@@ -177,24 +182,9 @@ export const getSearchedProducts = (address, key) => async (dispatch) => {
         if (result.data.message) {
             dispatch(getSearchFailed(result.data.message));
         } else {
-            dispatch(setFilteredProducts(result.files));
+            dispatch(setFilteredProducts(result.data)); // Assuming `result.data` contains the filtered products
         }
     } catch (error) {
-        dispatch(getError(error));
+        dispatch(getError({ message: error.message, status: error.response?.status }));
     }
-};
-
-// Consolidate all exports in one statement
-export {
-    authUser,
-    addStuff,
-    updateStuff,
-    deleteStuff,
-    updateCustomer,
-    getProductsbySeller,
-    getProducts,
-    getProductDetails,
-    getCustomers,
-    getSpecificProducts,
-    getSearchedProducts,
 };
