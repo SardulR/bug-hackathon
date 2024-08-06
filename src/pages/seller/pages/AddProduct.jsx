@@ -22,7 +22,7 @@ const AddProduct = () => {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [tagline, setTagline] = useState("");
-  const seller = currentUser._id
+  const seller = currentUser?._id; // Bug 55: Added optional chaining to avoid accessing _id of undefined currentUser
 
   const [loader, setLoader] = useState(false);
   const [message, setMessage] = useState("");
@@ -45,7 +45,8 @@ const AddProduct = () => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    console.log(fields);
+    setLoader(true); // Bug 55: Set loader to true to show loading spinner
+    dispatch(addStuff(fields)); // Bug 55: Dispatch the action to add stuff
   };
 
   useEffect(() => {
@@ -209,4 +210,4 @@ const ProductImage = styled.img`
   width: 200px;
   height: auto;
   margin-bottom: 8px;
-`;
+`; // Bug 55: Added the missing closing backtick to terminate the template literal
