@@ -80,3 +80,4 @@ const LogoutButtonCancel = styled(LogoutButton)`
     background-color: rgb(10, 2, 69);
   }
 `;
+
